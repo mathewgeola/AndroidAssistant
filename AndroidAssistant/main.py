@@ -25,10 +25,10 @@ class PackageNamesDialog(QDialog):
         self.list_widget = QListWidget()
         layout.addWidget(self.list_widget)
 
-        refresh_package_names_pushButton = QPushButton("刷新应用包名列表")
-        layout.addWidget(refresh_package_names_pushButton)
+        button = QPushButton("刷新应用包名列表")
+        layout.addWidget(button)
 
-        refresh_package_names_pushButton.clicked.connect(self.load_package_names)
+        button.clicked.connect(self.load_package_names)
 
         self.update_list_signal.connect(self.refresh_list)
 
@@ -82,6 +82,8 @@ class AndroidAssistant(QMainWindow):
         self._init()
 
     def _init(self):
+        self._ui.adb_devices_pushButton.clicked.connect(self.on_adb_devices_pushButton_clicked)
+
         self._ui.install_apk_pushButton.clicked.connect(self.on_install_apk_pushButton_clicked)
         self._ui.uninstall_apk_pushButton.clicked.connect(self.on_uninstall_apk_pushButton_clicked)
         self._ui.adb_shell_am_force__stop_package_pushButton.clicked.connect(
@@ -111,6 +113,9 @@ class AndroidAssistant(QMainWindow):
     @property
     def logger(self):
         return self._logger
+
+    def on_adb_devices_pushButton_clicked(self):
+        self._cmd.run("adb", ["devices"])
 
     def on_adb_shell_am_force__stop_package_pushButton_clicked(self):
         pass
