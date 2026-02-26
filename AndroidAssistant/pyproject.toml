@@ -1,0 +1,5 @@
+[project]
+name = "AndroidAssistant"
+
+[tool.pyside6-project]
+files = ["main.py", "mainwindow.ui"]

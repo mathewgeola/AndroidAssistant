@@ -1,0 +1,9 @@
+.idea/
+*venv/
+*build/
+*dist/
+*.python-version
+*.pyc
+*.log
+*.spec
+.DS_Store
