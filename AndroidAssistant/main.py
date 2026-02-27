@@ -1,70 +1,15 @@
 import os
+import re
 import sys
 
-from PySide6.QtCore import Signal, Qt
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QPushButton, QDialog, QVBoxLayout, QListWidget, \
-    QMessageBox, QMenu
+from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QMenu
 
 from cmd import Cmd
 from logger import Logger
+from signals import Signals
 from ui_mainwindow import Ui_MainWindow
-
-
-class PackageNamesDialog(QDialog):
-    update_list_signal = Signal(list)
-
-    def __init__(self, cmd: Cmd | None = None, parent=None):
-        super().__init__(parent)
-        self._cmd = cmd
-
-        self.setWindowTitle("双击选择要卸载的应用包名")
-        self.resize(400, 500)
-
-        layout = QVBoxLayout(self)
-        self.list_widget = QListWidget()
-        layout.addWidget(self.list_widget)
-
-        button = QPushButton("刷新应用包名列表")
-        layout.addWidget(button)
-
-        button.clicked.connect(self.load_package_names)
-
-        self.update_list_signal.connect(self.refresh_list)
-
-        self.list_widget.itemDoubleClicked.connect(self.uninstall_apk)
-
-        self.load_package_names()
-
-    def refresh_list(self, package_list):
-        self.list_widget.clear()
-        self.list_widget.addItems(package_list)
-
-    def load_package_names(self):
-        def handle_output(exit_code, full_output):
-            lines = full_output.strip().split("\n")
-            packages = [line.replace("package:", "").strip() for line in lines if line.strip()]
-            self.update_list_signal.emit(packages)
-
-        self._cmd.run("adb", ["shell", "pm", "list", "packages", "-3"], handle_output)
-
-    def uninstall_apk(self, item):
-        package_name = item.text()
-        reply = QMessageBox.question(
-            self,
-            "提示",
-            f"确定卸载：\n{package_name} ?"
-        )
-
-        if reply == QMessageBox.StandardButton.Yes:
-            def uninstall_finished(exit_code, full_output):
-                if exit_code == 0:
-                    QMessageBox.information(self, "成功", f"{package_name} 卸载成功")
-                else:
-                    QMessageBox.warning(self, "失败", f"{package_name} 卸载失败")
-                self.load_package_names()
-
-            self._cmd.run("adb", ["uninstall", package_name], uninstall_finished)
 
 
 class AndroidAssistant(QMainWindow):
@@ -80,9 +25,30 @@ class AndroidAssistant(QMainWindow):
         self._ui.setupUi(self)
 
         self._init()
+        self._init_signal()
 
     def _init(self):
+        self._ui.adb_pushButton.clicked.connect(
+            lambda: self._ui.stackedWidget.setCurrentWidget(self._ui.adb_page)
+        )
+        self._ui.frida_pushButton.clicked.connect(
+            lambda: self._ui.stackedWidget.setCurrentWidget(self._ui.frida_page)
+        )
+
+        self._ui.adb_kill_server_pushButton.clicked.connect(self.on_adb_kill_server_pushButton_clicked)
+        self._ui.adb_start_server_pushButton.clicked.connect(self.on_adb_start_server_pushButton_clicked)
         self._ui.adb_devices_pushButton.clicked.connect(self.on_adb_devices_pushButton_clicked)
+
+        self._ui.adb_shell_pm_list_packages_pushButton.clicked.connect(
+            self.on_adb_shell_pm_list_packages_pushButton_clicked
+        )
+        self._ui.adb_reboot_bootloader_pushButton.clicked.connect(
+            lambda: self._cmd.run("adb", ["reboot", "bootloader"])
+        )
+        self._ui.fastboot_reboot_pushButton.clicked.connect(
+            lambda: self._cmd.run("fastboot", ["reboot"])
+        )
+        self._ui.fastboot_devices_pushButton.clicked.connect(self.on_fastboot_devices_pushButton_clicked)
 
         self._ui.install_apk_pushButton.clicked.connect(self.on_install_apk_pushButton_clicked)
         self._ui.uninstall_apk_pushButton.clicked.connect(self.on_uninstall_apk_pushButton_clicked)
@@ -99,6 +65,12 @@ class AndroidAssistant(QMainWindow):
 
         self._cmd = Cmd(self._logger)
 
+    def _init_signal(self):
+        self._signals = Signals()
+        self._signals.adb_shell_pm_list_packages.connect(
+            self.on_adb_shell_pm_list_packages_pushButton_clicked
+        )
+
     def context_menu(self, point):
         menu = QMenu()
         clear_action = menu.addAction("清空")
@@ -114,39 +86,82 @@ class AndroidAssistant(QMainWindow):
     def logger(self):
         return self._logger
 
-    def on_adb_devices_pushButton_clicked(self):
-        self._cmd.run("adb", ["devices"])
+    def on_adb_kill_server_pushButton_clicked(self):
+        self._cmd.run("adb", ["kill-server"])
 
-    def on_adb_shell_am_force__stop_package_pushButton_clicked(self):
-        pass
+    def on_adb_start_server_pushButton_clicked(self):
+        self._cmd.run("adb", ["start-server"])
+
+    def on_adb_shell_pm_list_packages_pushButton_clicked(self):
+        def callback(code, output):
+            self._ui.adb_shell_pm_list_packages_listWidget.clear()
+            if code == 0:
+                items = [line.replace("package:", "").strip() for line in output.strip().split("\n") if line.strip()]
+                self._ui.adb_shell_pm_list_packages_listWidget.addItems(items)
+
+        program_args = ["shell", "pm", "list", "packages"]
+        if self._ui.system_packages_checkBox.isChecked():
+            program_args.append("-s")
+        if self._ui.third_party_packages_checkBox.isChecked():
+            program_args.append("-3")
+        self._cmd.run("adb", program_args, callback)
+
+    def on_adb_devices_pushButton_clicked(self):
+        def callback(code, output):
+            self._ui.adb_devices_listWidget.clear()
+            if code == 0:
+                data = re.findall(r"List of devices attached(.*)", output, re.DOTALL)[0].strip()
+                items = data.split("\r\n")
+                if len(items) == 1:
+                    items = items[0].split("\n")
+
+                self._ui.adb_devices_listWidget.addItems(items)
+
+        program_args = ["devices"]
+        if self._ui.long_checkBox.isChecked():
+            program_args.append("-l")
+        self._cmd.run("adb", program_args, callback)
+
+    def on_fastboot_devices_pushButton_clicked(self):
+        def callback(code, output):
+            self._ui.fastboot_devices_listWidget.clear()
+            if code == 0:
+                if output:
+                    data = output.strip()
+                    items = data.split("\r\n")
+                    if len(items) == 1:
+                        items = items[0].split("\n")
+                    self._ui.fastboot_devices_listWidget.addItems(items)
+
+        program_args = ["devices"]
+        self._cmd.run("fastboot", program_args, callback)
 
     def on_install_apk_pushButton_clicked(self):
-        file_paths, _ = QFileDialog.getOpenFileNames(
+        apk_file_paths, _ = QFileDialog.getOpenFileNames(
             self,
             "可多选要安装的 apk 文件路径",
             self.APKS_DIR,
             "apk 文件路径 (*.apk)"
         )
 
-        if file_paths:
-            total = len(file_paths)
+        if apk_file_paths:
+            total = len(apk_file_paths)
             finished_count = 0
-            success_list = []
+            success_dict = {}
             fail_dict = {}
 
-            def install_finished(exit_code, full_output, path):
+            def callback(code, output, apk_file_path):
                 nonlocal finished_count
 
                 finished_count += 1
 
-                if exit_code == 0:
-                    success_list.append(path)
+                if code == 0:
+                    success_dict[apk_file_path] = output
                 else:
-                    reason = full_output.strip()
-                    fail_dict[path] = reason if reason else "未知错误"
+                    fail_dict[apk_file_path] = output
 
                 if finished_count == total:
-                    success_count = len(success_list)
+                    success_count = len(success_dict)
                     fail_count = len(fail_dict)
 
                     result_msg = (
@@ -155,27 +170,92 @@ class AndroidAssistant(QMainWindow):
                         f"失败 {fail_count} 个\n\n"
                     )
 
-                    if success_list:
-                        result_msg += "安装成功 apk 文件路径：\n"
-                        result_msg += "\n".join(success_list)
+                    if success_dict:
+                        result_msg += "安装成功的 apk 文件路径：\n"
+                        result_msg += "\n".join(list(success_dict.keys()))
                         result_msg += "\n\n"
 
                     if fail_dict:
-                        result_msg += "安装失败 apk 文件路径 及 失败原因：\n"
-                        for path, reason in fail_dict.items():
-                            result_msg += f"apk 文件路径：{path}\n失败原因：{reason}\n\n"
+                        result_msg += "安装失败的 apk 文件路径和安装输出：\n"
+                        for k, v in fail_dict.items():
+                            result_msg += f"apk 文件路径：{k}\n安装输出：{v}\n\n"
 
                     QMessageBox.information(self, "安装结果", result_msg)
 
-            for file_path in file_paths:
-                self._cmd.run(
-                    "adb", ["install", file_path],
-                    install_finished, finish_func_kwargs=dict(path=file_path)
-                )
+                self._signals.adb_shell_pm_list_packages.emit()
+
+            def main():
+                for apk_file_path in apk_file_paths:
+                    self._cmd.run(
+                        "adb", ["install", apk_file_path],
+                        callback, callback_kwargs=dict(apk_file_path=apk_file_path)
+                    )
+
+            main()
 
     def on_uninstall_apk_pushButton_clicked(self):
-        dialog = PackageNamesDialog(self._cmd, self)
-        dialog.exec()
+        items = self._ui.adb_shell_pm_list_packages_listWidget.selectedItems()
+        if not items:
+            return
+
+        package_names = [item.text() for item in items]
+
+        reply = QMessageBox.question(
+            self,
+            "提示",
+            f"确定卸载：\n{'，'.join(package_names)} ?"
+        )
+        if reply == QMessageBox.StandardButton.Yes:
+            total = len(package_names)
+            finished_count = 0
+            success_dict = {}
+            fail_dict = {}
+
+            def callback(code, output, package_name):
+                nonlocal finished_count
+
+                finished_count += 1
+
+                if code == 0:
+                    success_dict[package_name] = output
+                else:
+                    fail_dict[package_name] = output
+
+                if finished_count == total:
+                    success_count = len(success_dict)
+                    fail_count = len(fail_dict)
+
+                    result_msg = (
+                        f"共卸载 {total} 个应用\n"
+                        f"成功 {success_count} 个\n"
+                        f"失败 {fail_count} 个\n\n"
+                    )
+
+                    if success_dict:
+                        result_msg += "卸载成功的应用包名：\n"
+                        result_msg += "\n".join(list(success_dict.keys()))
+                        result_msg += "\n\n"
+
+                    if fail_dict:
+                        result_msg += "卸载失败的应用包名和卸载输出：\n"
+                        for k, v in fail_dict.items():
+                            result_msg += f"应用包名：{k}\n卸载输出：{v}\n\n"
+
+                    QMessageBox.information(self, "卸载结果", result_msg)
+
+                self._signals.adb_shell_pm_list_packages.emit()
+
+            def main():
+                for package_name in package_names:
+                    self._cmd.run(
+                        "adb", ["uninstall", package_name],
+                        callback, callback_kwargs=dict(package_name=package_name)
+                    )
+
+            main()
+
+    def on_adb_shell_am_force__stop_package_pushButton_clicked(self):
+        pass
 
 
 if __name__ == '__main__':

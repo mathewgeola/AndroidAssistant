@@ -5,56 +5,52 @@ from logger import Logger
 
 class Cmd(QObject):
     outputReceived = Signal(str)
-    finished = Signal(int, str)  # exit_code, full_output
+    finished = Signal(int, str)  # code, output
 
     def __init__(self, logger: Logger | None = None, use_logger: bool = True):
         super().__init__()
         self._logger: Logger | None = logger
         self._use_logger = use_logger
 
-        self._process: QProcess | None = None
-        self._cmd: str | None = None
-        self._buffer: str | None = None
-
         self._times: int = 0
         self._processes: list[QProcess] = []
 
-    def run(self, program: str, args: list, finish_func=None, finish_func_kwargs=None, use_logger=True):
+    def run(self, program: str, program_args: list, callback=None, callback_kwargs=None, use_logger=True):
         process = QProcess(self)
-        buffer = ""
-        cmd_str = f"{program} {' '.join(args)}"
+        output = ""
+        cmd_str = f"{program} {' '.join(program_args)}"
 
         process.setProcessChannelMode(QProcess.ProcessChannelMode.SeparateChannels)
 
         def on_stdout():
-            nonlocal buffer
+            nonlocal output
             data = process.readAllStandardOutput().data().decode()
-            buffer += data
+            output += data
             self.outputReceived.emit(data)
             if use_logger and self._logger:
                 self._logger.debug(data, tag=tag)
 
         def on_stderr():
-            nonlocal buffer
+            nonlocal output
             data = process.readAllStandardError().data().decode()
-            buffer += data
+            output += data
             self.outputReceived.emit(data)
             if use_logger and self._logger:
                 self._logger.debug(data, tag=tag)
 
-        def on_finished(exit_code):
-            if finish_func:
-                if finish_func_kwargs:
-                    finish_func(exit_code, buffer, **finish_func_kwargs)
+        def on_finished(code):
+            if callback:
+                if callback_kwargs:
+                    callback(code, output, **callback_kwargs)
                 else:
-                    finish_func(exit_code, buffer)
-            self.finished.emit(exit_code, buffer)
+                    callback(code, output)
+            self.finished.emit(code, output)
             self._processes.remove(process)
             if use_logger and self._logger:
-                if exit_code == 0:
-                    self._logger.success(f"{cmd_str} exited with code {exit_code}", tag=tag)
+                if code == 0:
+                    self._logger.success(f"{cmd_str} exited with code {code}", tag=tag)
                 else:
-                    self._logger.error(f"{cmd_str} exited with code {exit_code}", tag=tag)
+                    self._logger.error(f"{cmd_str} exited with code {code}", tag=tag)
 
         process.readyReadStandardOutput.connect(on_stdout)
         process.readyReadStandardError.connect(on_stderr)
@@ -65,5 +61,5 @@ class Cmd(QObject):
             tag = f"[{self._times}]"
             self._logger.info(cmd_str, tag=tag)
 
-        process.start(program, args)
+        process.start(program, program_args)
         self._processes.append(process)
