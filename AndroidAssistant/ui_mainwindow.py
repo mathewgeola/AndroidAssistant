@@ -17,10 +17,10 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QDockWidget,
-    QFrame, QGridLayout, QGroupBox, QHBoxLayout,
-    QLabel, QLineEdit, QListWidget, QListWidgetItem,
-    QMainWindow, QMenu, QMenuBar, QPushButton,
-    QScrollArea, QSizePolicy, QStackedWidget, QStatusBar,
+    QFrame, QGroupBox, QHBoxLayout, QLabel,
+    QLineEdit, QListWidget, QListWidgetItem, QMainWindow,
+    QMenu, QMenuBar, QPushButton, QScrollArea,
+    QSizePolicy, QSpacerItem, QStackedWidget, QStatusBar,
     QTextBrowser, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
@@ -49,99 +49,115 @@ class Ui_MainWindow(object):
         self.scrollArea_5.setWidgetResizable(True)
         self.scrollAreaWidgetContents_5 = QWidget()
         self.scrollAreaWidgetContents_5.setObjectName(u"scrollAreaWidgetContents_5")
-        self.scrollAreaWidgetContents_5.setGeometry(QRect(0, 0, 991, 622))
+        self.scrollAreaWidgetContents_5.setGeometry(QRect(0, 0, 991, 1053))
         self.verticalLayout_12 = QVBoxLayout(self.scrollAreaWidgetContents_5)
         self.verticalLayout_12.setObjectName(u"verticalLayout_12")
-        self.groupBox_3 = QGroupBox(self.scrollAreaWidgetContents_5)
-        self.groupBox_3.setObjectName(u"groupBox_3")
-        self.gridLayout_2 = QGridLayout(self.groupBox_3)
-        self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.adb_devices_listWidget = QListWidget(self.groupBox_3)
+        self.adb_devices_groupBox = QGroupBox(self.scrollAreaWidgetContents_5)
+        self.adb_devices_groupBox.setObjectName(u"adb_devices_groupBox")
+        self.verticalLayout_11 = QVBoxLayout(self.adb_devices_groupBox)
+        self.verticalLayout_11.setObjectName(u"verticalLayout_11")
+        self.adb_devices_listWidget = QListWidget(self.adb_devices_groupBox)
         self.adb_devices_listWidget.setObjectName(u"adb_devices_listWidget")
 
-        self.gridLayout_2.addWidget(self.adb_devices_listWidget, 0, 0, 1, 1)
+        self.verticalLayout_11.addWidget(self.adb_devices_listWidget)
 
-        self.scrollArea = QScrollArea(self.groupBox_3)
-        self.scrollArea.setObjectName(u"scrollArea")
-        self.scrollArea.setWidgetResizable(True)
-        self.scrollAreaWidgetContents = QWidget()
-        self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 454, 168))
-        self.verticalLayout_11 = QVBoxLayout(self.scrollAreaWidgetContents)
-        self.verticalLayout_11.setObjectName(u"verticalLayout_11")
-        self.frame_2 = QFrame(self.scrollAreaWidgetContents)
+        self.frame_3 = QFrame(self.adb_devices_groupBox)
+        self.frame_3.setObjectName(u"frame_3")
+        self.frame_3.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_3.setFrameShadow(QFrame.Shadow.Raised)
+        self.verticalLayout_8 = QVBoxLayout(self.frame_3)
+        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
+        self.frame_10 = QFrame(self.frame_3)
+        self.frame_10.setObjectName(u"frame_10")
+        self.frame_10.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_10.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_7 = QHBoxLayout(self.frame_10)
+        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
+        self.frame_2 = QFrame(self.frame_10)
         self.frame_2.setObjectName(u"frame_2")
         self.frame_2.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_2.setFrameShadow(QFrame.Shadow.Raised)
         self.horizontalLayout = QHBoxLayout(self.frame_2)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.adb_start_server_pushButton = QPushButton(self.frame_2)
-        self.adb_start_server_pushButton.setObjectName(u"adb_start_server_pushButton")
+        self.long_checkBox_2 = QCheckBox(self.frame_2)
+        self.long_checkBox_2.setObjectName(u"long_checkBox_2")
 
-        self.horizontalLayout.addWidget(self.adb_start_server_pushButton)
-
-        self.adb_kill_server_pushButton = QPushButton(self.frame_2)
-        self.adb_kill_server_pushButton.setObjectName(u"adb_kill_server_pushButton")
-
-        self.horizontalLayout.addWidget(self.adb_kill_server_pushButton)
+        self.horizontalLayout.addWidget(self.long_checkBox_2)
 
 
-        self.verticalLayout_11.addWidget(self.frame_2)
+        self.horizontalLayout_7.addWidget(self.frame_2)
 
-        self.frame_5 = QFrame(self.scrollAreaWidgetContents)
+        self.adb_devices_pushButton = QPushButton(self.frame_10)
+        self.adb_devices_pushButton.setObjectName(u"adb_devices_pushButton")
+
+        self.horizontalLayout_7.addWidget(self.adb_devices_pushButton)
+
+
+        self.verticalLayout_8.addWidget(self.frame_10)
+
+
+        self.verticalLayout_11.addWidget(self.frame_3)
+
+        self.frame_5 = QFrame(self.adb_devices_groupBox)
         self.frame_5.setObjectName(u"frame_5")
         self.frame_5.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_5.setFrameShadow(QFrame.Shadow.Raised)
-        self.horizontalLayout_4 = QHBoxLayout(self.frame_5)
+        self.verticalLayout_16 = QVBoxLayout(self.frame_5)
+        self.verticalLayout_16.setObjectName(u"verticalLayout_16")
+        self.frame_11 = QFrame(self.frame_5)
+        self.frame_11.setObjectName(u"frame_11")
+        self.frame_11.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_11.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_4 = QHBoxLayout(self.frame_11)
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
-        self.long_checkBox = QCheckBox(self.frame_5)
-        self.long_checkBox.setObjectName(u"long_checkBox")
+        self.adb_start_server_pushButton = QPushButton(self.frame_11)
+        self.adb_start_server_pushButton.setObjectName(u"adb_start_server_pushButton")
 
-        self.horizontalLayout_4.addWidget(self.long_checkBox)
+        self.horizontalLayout_4.addWidget(self.adb_start_server_pushButton)
 
-        self.adb_devices_pushButton = QPushButton(self.frame_5)
-        self.adb_devices_pushButton.setObjectName(u"adb_devices_pushButton")
+        self.adb_kill_server_pushButton = QPushButton(self.frame_11)
+        self.adb_kill_server_pushButton.setObjectName(u"adb_kill_server_pushButton")
 
-        self.horizontalLayout_4.addWidget(self.adb_devices_pushButton)
+        self.horizontalLayout_4.addWidget(self.adb_kill_server_pushButton)
+
+
+        self.verticalLayout_16.addWidget(self.frame_11)
+
+        self.adb_reboot_pushButton = QPushButton(self.frame_5)
+        self.adb_reboot_pushButton.setObjectName(u"adb_reboot_pushButton")
+
+        self.verticalLayout_16.addWidget(self.adb_reboot_pushButton)
+
+        self.adb_reboot_bootloader_pushButton = QPushButton(self.frame_5)
+        self.adb_reboot_bootloader_pushButton.setObjectName(u"adb_reboot_bootloader_pushButton")
+
+        self.verticalLayout_16.addWidget(self.adb_reboot_bootloader_pushButton)
 
 
         self.verticalLayout_11.addWidget(self.frame_5)
 
-        self.adb_reboot_pushButton = QPushButton(self.scrollAreaWidgetContents)
-        self.adb_reboot_pushButton.setObjectName(u"adb_reboot_pushButton")
 
-        self.verticalLayout_11.addWidget(self.adb_reboot_pushButton)
+        self.verticalLayout_12.addWidget(self.adb_devices_groupBox)
 
-        self.adb_reboot_bootloader_pushButton = QPushButton(self.scrollAreaWidgetContents)
-        self.adb_reboot_bootloader_pushButton.setObjectName(u"adb_reboot_bootloader_pushButton")
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
-        self.verticalLayout_11.addWidget(self.adb_reboot_bootloader_pushButton)
-
-        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
-
-        self.gridLayout_2.addWidget(self.scrollArea, 0, 1, 1, 1)
-
-
-        self.verticalLayout_12.addWidget(self.groupBox_3)
+        self.verticalLayout_12.addItem(self.horizontalSpacer)
 
         self.groupBox_4 = QGroupBox(self.scrollAreaWidgetContents_5)
         self.groupBox_4.setObjectName(u"groupBox_4")
-        self.gridLayout_5 = QGridLayout(self.groupBox_4)
-        self.gridLayout_5.setObjectName(u"gridLayout_5")
+        self.verticalLayout_17 = QVBoxLayout(self.groupBox_4)
+        self.verticalLayout_17.setObjectName(u"verticalLayout_17")
         self.fastboot_devices_listWidget = QListWidget(self.groupBox_4)
         self.fastboot_devices_listWidget.setObjectName(u"fastboot_devices_listWidget")
 
-        self.gridLayout_5.addWidget(self.fastboot_devices_listWidget, 0, 0, 1, 1)
+        self.verticalLayout_17.addWidget(self.fastboot_devices_listWidget)
 
-        self.scrollArea_4 = QScrollArea(self.groupBox_4)
-        self.scrollArea_4.setObjectName(u"scrollArea_4")
-        self.scrollArea_4.setWidgetResizable(True)
-        self.scrollAreaWidgetContents_4 = QWidget()
-        self.scrollAreaWidgetContents_4.setObjectName(u"scrollAreaWidgetContents_4")
-        self.scrollAreaWidgetContents_4.setGeometry(QRect(0, 0, 454, 90))
-        self.verticalLayout_10 = QVBoxLayout(self.scrollAreaWidgetContents_4)
-        self.verticalLayout_10.setObjectName(u"verticalLayout_10")
-        self.frame_8 = QFrame(self.scrollAreaWidgetContents_4)
+        self.fastboot_devices_pushButton = QPushButton(self.groupBox_4)
+        self.fastboot_devices_pushButton.setObjectName(u"fastboot_devices_pushButton")
+
+        self.verticalLayout_17.addWidget(self.fastboot_devices_pushButton)
+
+        self.frame_8 = QFrame(self.groupBox_4)
         self.frame_8.setObjectName(u"frame_8")
         self.frame_8.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_8.setFrameShadow(QFrame.Shadow.Raised)
@@ -153,47 +169,49 @@ class Ui_MainWindow(object):
         self.horizontalLayout_9.addWidget(self.fastboot_reboot_pushButton)
 
 
-        self.verticalLayout_10.addWidget(self.frame_8)
-
-        self.fastboot_devices_pushButton = QPushButton(self.scrollAreaWidgetContents_4)
-        self.fastboot_devices_pushButton.setObjectName(u"fastboot_devices_pushButton")
-
-        self.verticalLayout_10.addWidget(self.fastboot_devices_pushButton)
-
-        self.scrollArea_4.setWidget(self.scrollAreaWidgetContents_4)
-
-        self.gridLayout_5.addWidget(self.scrollArea_4, 0, 1, 1, 1)
+        self.verticalLayout_17.addWidget(self.frame_8)
 
 
         self.verticalLayout_12.addWidget(self.groupBox_4)
+
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.verticalLayout_12.addItem(self.horizontalSpacer_2)
 
         self.groupBox_2 = QGroupBox(self.scrollAreaWidgetContents_5)
         self.groupBox_2.setObjectName(u"groupBox_2")
         self.verticalLayout_14 = QVBoxLayout(self.groupBox_2)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
-        self.scrollArea_2 = QScrollArea(self.groupBox_2)
-        self.scrollArea_2.setObjectName(u"scrollArea_2")
-        self.scrollArea_2.setWidgetResizable(True)
-        self.scrollAreaWidgetContents_2 = QWidget()
-        self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
-        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 934, 110))
-        self.verticalLayout_8 = QVBoxLayout(self.scrollAreaWidgetContents_2)
-        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
-        self.frame_6 = QFrame(self.scrollAreaWidgetContents_2)
+        self.adb_shell_pm_list_packages_listWidget = QListWidget(self.groupBox_2)
+        self.adb_shell_pm_list_packages_listWidget.setObjectName(u"adb_shell_pm_list_packages_listWidget")
+        self.adb_shell_pm_list_packages_listWidget.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
+
+        self.verticalLayout_14.addWidget(self.adb_shell_pm_list_packages_listWidget)
+
+        self.frame_6 = QFrame(self.groupBox_2)
         self.frame_6.setObjectName(u"frame_6")
         self.frame_6.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_6.setFrameShadow(QFrame.Shadow.Raised)
         self.horizontalLayout_5 = QHBoxLayout(self.frame_6)
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
-        self.system_packages_checkBox = QCheckBox(self.frame_6)
+        self.frame_9 = QFrame(self.frame_6)
+        self.frame_9.setObjectName(u"frame_9")
+        self.frame_9.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_9.setFrameShadow(QFrame.Shadow.Raised)
+        self.verticalLayout_5 = QVBoxLayout(self.frame_9)
+        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
+        self.system_packages_checkBox = QCheckBox(self.frame_9)
         self.system_packages_checkBox.setObjectName(u"system_packages_checkBox")
 
-        self.horizontalLayout_5.addWidget(self.system_packages_checkBox)
+        self.verticalLayout_5.addWidget(self.system_packages_checkBox)
 
-        self.third_party_packages_checkBox = QCheckBox(self.frame_6)
+        self.third_party_packages_checkBox = QCheckBox(self.frame_9)
         self.third_party_packages_checkBox.setObjectName(u"third_party_packages_checkBox")
 
-        self.horizontalLayout_5.addWidget(self.third_party_packages_checkBox)
+        self.verticalLayout_5.addWidget(self.third_party_packages_checkBox)
+
+
+        self.horizontalLayout_5.addWidget(self.frame_9)
 
         self.adb_shell_pm_list_packages_pushButton = QPushButton(self.frame_6)
         self.adb_shell_pm_list_packages_pushButton.setObjectName(u"adb_shell_pm_list_packages_pushButton")
@@ -201,9 +219,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5.addWidget(self.adb_shell_pm_list_packages_pushButton)
 
 
-        self.verticalLayout_8.addWidget(self.frame_6)
+        self.verticalLayout_14.addWidget(self.frame_6)
 
-        self.frame_7 = QFrame(self.scrollAreaWidgetContents_2)
+        self.frame_7 = QFrame(self.groupBox_2)
         self.frame_7.setObjectName(u"frame_7")
         self.frame_7.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_7.setFrameShadow(QFrame.Shadow.Raised)
@@ -220,34 +238,25 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.addWidget(self.uninstall_apk_pushButton)
 
 
-        self.verticalLayout_8.addWidget(self.frame_7)
-
-        self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_2)
-
-        self.verticalLayout_14.addWidget(self.scrollArea_2)
-
-        self.adb_shell_pm_list_packages_listWidget = QListWidget(self.groupBox_2)
-        self.adb_shell_pm_list_packages_listWidget.setObjectName(u"adb_shell_pm_list_packages_listWidget")
-        self.adb_shell_pm_list_packages_listWidget.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
-
-        self.verticalLayout_14.addWidget(self.adb_shell_pm_list_packages_listWidget)
+        self.verticalLayout_14.addWidget(self.frame_7)
 
 
         self.verticalLayout_12.addWidget(self.groupBox_2)
+
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.verticalLayout_12.addItem(self.horizontalSpacer_3)
 
         self.groupBox_5 = QGroupBox(self.scrollAreaWidgetContents_5)
         self.groupBox_5.setObjectName(u"groupBox_5")
         self.verticalLayout_15 = QVBoxLayout(self.groupBox_5)
         self.verticalLayout_15.setObjectName(u"verticalLayout_15")
-        self.scrollArea_3 = QScrollArea(self.groupBox_5)
-        self.scrollArea_3.setObjectName(u"scrollArea_3")
-        self.scrollArea_3.setWidgetResizable(True)
-        self.scrollAreaWidgetContents_3 = QWidget()
-        self.scrollAreaWidgetContents_3.setObjectName(u"scrollAreaWidgetContents_3")
-        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 934, 90))
-        self.verticalLayout_5 = QVBoxLayout(self.scrollAreaWidgetContents_3)
-        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
-        self.frame = QFrame(self.scrollAreaWidgetContents_3)
+        self.listWidget = QListWidget(self.groupBox_5)
+        self.listWidget.setObjectName(u"listWidget")
+
+        self.verticalLayout_15.addWidget(self.listWidget)
+
+        self.frame = QFrame(self.groupBox_5)
         self.frame.setObjectName(u"frame")
         self.frame.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame.setFrameShadow(QFrame.Shadow.Raised)
@@ -269,21 +278,12 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addWidget(self.pushButton)
 
 
-        self.verticalLayout_5.addWidget(self.frame)
+        self.verticalLayout_15.addWidget(self.frame)
 
-        self.adb_shell_am_force__stop_package_pushButton = QPushButton(self.scrollAreaWidgetContents_3)
+        self.adb_shell_am_force__stop_package_pushButton = QPushButton(self.groupBox_5)
         self.adb_shell_am_force__stop_package_pushButton.setObjectName(u"adb_shell_am_force__stop_package_pushButton")
 
-        self.verticalLayout_5.addWidget(self.adb_shell_am_force__stop_package_pushButton)
-
-        self.scrollArea_3.setWidget(self.scrollAreaWidgetContents_3)
-
-        self.verticalLayout_15.addWidget(self.scrollArea_3)
-
-        self.listWidget = QListWidget(self.groupBox_5)
-        self.listWidget.setObjectName(u"listWidget")
-
-        self.verticalLayout_15.addWidget(self.listWidget)
+        self.verticalLayout_15.addWidget(self.adb_shell_am_force__stop_package_pushButton)
 
 
         self.verticalLayout_12.addWidget(self.groupBox_5)
@@ -384,16 +384,16 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"ADB \u8bbe\u5907", None))
+        self.adb_devices_groupBox.setTitle(QCoreApplication.translate("MainWindow", u"ADB \u8bbe\u5907", None))
+        self.long_checkBox_2.setText(QCoreApplication.translate("MainWindow", u"\u663e\u793a\u8be6\u7ec6\u4fe1\u606f", None))
+        self.adb_devices_pushButton.setText(QCoreApplication.translate("MainWindow", u"\u67e5\u8be2\u8c03\u8bd5\u8bbe\u5907\u5217\u8868", None))
         self.adb_start_server_pushButton.setText(QCoreApplication.translate("MainWindow", u"adb start-server", None))
         self.adb_kill_server_pushButton.setText(QCoreApplication.translate("MainWindow", u"adb kill-server", None))
-        self.long_checkBox.setText(QCoreApplication.translate("MainWindow", u"\u663e\u793a\u8be6\u7ec6\u4fe1\u606f", None))
-        self.adb_devices_pushButton.setText(QCoreApplication.translate("MainWindow", u"\u67e5\u8be2\u8c03\u8bd5\u8bbe\u5907\u5217\u8868", None))
         self.adb_reboot_pushButton.setText(QCoreApplication.translate("MainWindow", u"adb reboot", None))
         self.adb_reboot_bootloader_pushButton.setText(QCoreApplication.translate("MainWindow", u"adb reboot bootloader", None))
         self.groupBox_4.setTitle(QCoreApplication.translate("MainWindow", u"Fastboot \u8bbe\u5907", None))
-        self.fastboot_reboot_pushButton.setText(QCoreApplication.translate("MainWindow", u"fastboot reboot", None))
         self.fastboot_devices_pushButton.setText(QCoreApplication.translate("MainWindow", u"\u67e5\u8be2\u5f15\u5bfc\u6a21\u5f0f\u8bbe\u5907\u5217\u8868", None))
+        self.fastboot_reboot_pushButton.setText(QCoreApplication.translate("MainWindow", u"fastboot reboot", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"\u5e94\u7528\u5305\u540d", None))
         self.system_packages_checkBox.setText(QCoreApplication.translate("MainWindow", u"\u83b7\u53d6\u7cfb\u7edf\u5e94\u7528", None))
         self.third_party_packages_checkBox.setText(QCoreApplication.translate("MainWindow", u"\u83b7\u53d6\u7b2c\u4e09\u65b9\u5e94\u7528", None))
