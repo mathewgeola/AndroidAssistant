@@ -31,6 +31,8 @@ class AndroidAssistant(QMainWindow):
         self._init_signal()
 
     def _init(self):
+        self._ui.adb_pc_pushButton.clicked.connect(self.on_adb_pc_pushButton_clicked)
+
         self._ui.adb_pushButton.clicked.connect(
             lambda: self._ui.stackedWidget.setCurrentWidget(self._ui.adb_page)
         )
@@ -110,6 +112,17 @@ class AndroidAssistant(QMainWindow):
     @property
     def logger(self):
         return self._logger
+
+    def on_adb_pc_pushButton_clicked(self):
+        dialog = QFileDialog(self)
+        dialog.setWindowTitle("选择文件或目录")
+        dialog.setNameFilter("文件或目录 (*.*)")
+        dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        dialog.setViewMode(QFileDialog.ViewMode.Detail)
+        if dialog.exec():
+            selected_files = dialog.selectedFiles()
+            text = ";".join([file_path for file_path in selected_files])
+            self._ui.adb_pc_lineEdit.setText(text)
 
     def on_adb_shell_pm_list_packages_pushButton_clicked(self):
         def callback(code, output):

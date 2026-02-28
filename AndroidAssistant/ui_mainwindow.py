@@ -50,7 +50,7 @@ class Ui_MainWindow(object):
         self.scrollArea_5.setWidgetResizable(True)
         self.scrollAreaWidgetContents_5 = QWidget()
         self.scrollAreaWidgetContents_5.setObjectName(u"scrollAreaWidgetContents_5")
-        self.scrollAreaWidgetContents_5.setGeometry(QRect(0, 0, 991, 1623))
+        self.scrollAreaWidgetContents_5.setGeometry(QRect(0, -100, 991, 1770))
         self.verticalLayout_12 = QVBoxLayout(self.scrollAreaWidgetContents_5)
         self.verticalLayout_12.setObjectName(u"verticalLayout_12")
         self.adb_devices_groupBox = QGroupBox(self.scrollAreaWidgetContents_5)
@@ -153,17 +153,74 @@ class Ui_MainWindow(object):
         self.frame_12.setObjectName(u"frame_12")
         self.frame_12.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_12.setFrameShadow(QFrame.Shadow.Raised)
-        self.horizontalLayout_8 = QHBoxLayout(self.frame_12)
+        self.verticalLayout_19 = QVBoxLayout(self.frame_12)
+        self.verticalLayout_19.setObjectName(u"verticalLayout_19")
+        self.frame_16 = QFrame(self.frame_12)
+        self.frame_16.setObjectName(u"frame_16")
+        self.frame_16.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_16.setFrameShadow(QFrame.Shadow.Raised)
+        self.verticalLayout_20 = QVBoxLayout(self.frame_16)
+        self.verticalLayout_20.setObjectName(u"verticalLayout_20")
+        self.frame_17 = QFrame(self.frame_16)
+        self.frame_17.setObjectName(u"frame_17")
+        self.frame_17.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_17.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_8 = QHBoxLayout(self.frame_17)
         self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
-        self.adb_push_pc_mobile_pushButton = QPushButton(self.frame_12)
+        self.adb_pc_label = QLabel(self.frame_17)
+        self.adb_pc_label.setObjectName(u"adb_pc_label")
+
+        self.horizontalLayout_8.addWidget(self.adb_pc_label)
+
+        self.adb_pc_lineEdit = QLineEdit(self.frame_17)
+        self.adb_pc_lineEdit.setObjectName(u"adb_pc_lineEdit")
+
+        self.horizontalLayout_8.addWidget(self.adb_pc_lineEdit)
+
+        self.adb_pc_pushButton = QPushButton(self.frame_17)
+        self.adb_pc_pushButton.setObjectName(u"adb_pc_pushButton")
+
+        self.horizontalLayout_8.addWidget(self.adb_pc_pushButton)
+
+
+        self.verticalLayout_20.addWidget(self.frame_17)
+
+        self.frame_18 = QFrame(self.frame_16)
+        self.frame_18.setObjectName(u"frame_18")
+        self.frame_18.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_18.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_12 = QHBoxLayout(self.frame_18)
+        self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
+        self.adb_mobile_label = QLabel(self.frame_18)
+        self.adb_mobile_label.setObjectName(u"adb_mobile_label")
+
+        self.horizontalLayout_12.addWidget(self.adb_mobile_label)
+
+        self.adb_mobile_lineEdit = QLineEdit(self.frame_18)
+        self.adb_mobile_lineEdit.setObjectName(u"adb_mobile_lineEdit")
+
+        self.horizontalLayout_12.addWidget(self.adb_mobile_lineEdit)
+
+        self.adb_mobile_pushButton = QPushButton(self.frame_18)
+        self.adb_mobile_pushButton.setObjectName(u"adb_mobile_pushButton")
+
+        self.horizontalLayout_12.addWidget(self.adb_mobile_pushButton)
+
+
+        self.verticalLayout_20.addWidget(self.frame_18)
+
+        self.adb_push_pc_mobile_pushButton = QPushButton(self.frame_16)
         self.adb_push_pc_mobile_pushButton.setObjectName(u"adb_push_pc_mobile_pushButton")
 
-        self.horizontalLayout_8.addWidget(self.adb_push_pc_mobile_pushButton)
+        self.verticalLayout_20.addWidget(self.adb_push_pc_mobile_pushButton)
 
-        self.adb_pull_mobile_pc_pushButton = QPushButton(self.frame_12)
+        self.adb_pull_mobile_pc_pushButton = QPushButton(self.frame_16)
         self.adb_pull_mobile_pc_pushButton.setObjectName(u"adb_pull_mobile_pc_pushButton")
 
-        self.horizontalLayout_8.addWidget(self.adb_pull_mobile_pc_pushButton)
+        self.verticalLayout_20.addWidget(self.adb_pull_mobile_pc_pushButton)
+
+
+        self.verticalLayout_19.addWidget(self.frame_16)
 
 
         self.verticalLayout_16.addWidget(self.frame_12)
@@ -492,6 +549,10 @@ class Ui_MainWindow(object):
         self.adb_reboot_pushButton.setText(QCoreApplication.translate("MainWindow", u"adb reboot", None))
         self.adb_reboot_recovery_pushButton.setText(QCoreApplication.translate("MainWindow", u"adb reboot recovery", None))
         self.adb_reboot_bootloader_pushButton.setText(QCoreApplication.translate("MainWindow", u"adb reboot bootloader", None))
+        self.adb_pc_label.setText(QCoreApplication.translate("MainWindow", u"pc       ", None))
+        self.adb_pc_pushButton.setText(QCoreApplication.translate("MainWindow", u"\u6d4f\u89c8", None))
+        self.adb_mobile_label.setText(QCoreApplication.translate("MainWindow", u"mobile", None))
+        self.adb_mobile_pushButton.setText(QCoreApplication.translate("MainWindow", u"\u6d4f\u89c8", None))
         self.adb_push_pc_mobile_pushButton.setText(QCoreApplication.translate("MainWindow", u"adb push <pc> <mobile>", None))
         self.adb_pull_mobile_pc_pushButton.setText(QCoreApplication.translate("MainWindow", u"adb pull <mobile> <pc>", None))
         self.fastboot_devices_groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Fastboot \u8bbe\u5907", None))

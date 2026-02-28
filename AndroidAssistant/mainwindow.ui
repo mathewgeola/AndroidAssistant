@@ -40,9 +40,9 @@
               <property name="geometry">
                <rect>
                 <x>0</x>
-                <y>0</y>
+                <y>-100</y>
                 <width>991</width>
-                <height>1623</height>
+                <height>1770</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -188,19 +188,89 @@
                        <property name="frameShadow">
                         <enum>QFrame::Shadow::Raised</enum>
                        </property>
-                       <layout class="QHBoxLayout" name="horizontalLayout_8">
+                       <layout class="QVBoxLayout" name="verticalLayout_19">
                         <item>
-                         <widget class="QPushButton" name="adb_push_pc_mobile_pushButton">
-                          <property name="text">
-                           <string>adb push &lt;pc&gt; &lt;mobile&gt;</string>
+                         <widget class="QFrame" name="frame_16">
+                          <property name="frameShape">
+                           <enum>QFrame::Shape::StyledPanel</enum>
                           </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="adb_pull_mobile_pc_pushButton">
-                          <property name="text">
-                           <string>adb pull &lt;mobile&gt; &lt;pc&gt;</string>
+                          <property name="frameShadow">
+                           <enum>QFrame::Shadow::Raised</enum>
                           </property>
+                          <layout class="QVBoxLayout" name="verticalLayout_20">
+                           <item>
+                            <widget class="QFrame" name="frame_17">
+                             <property name="frameShape">
+                              <enum>QFrame::Shape::StyledPanel</enum>
+                             </property>
+                             <property name="frameShadow">
+                              <enum>QFrame::Shadow::Raised</enum>
+                             </property>
+                             <layout class="QHBoxLayout" name="horizontalLayout_8">
+                              <item>
+                               <widget class="QLabel" name="adb_pc_label">
+                                <property name="text">
+                                 <string>pc       </string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLineEdit" name="adb_pc_lineEdit"/>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="adb_pc_pushButton">
+                                <property name="text">
+                                 <string>浏览</string>
+                                </property>
+                               </widget>
+                              </item>
+                             </layout>
+                            </widget>
+                           </item>
+                           <item>
+                            <widget class="QFrame" name="frame_18">
+                             <property name="frameShape">
+                              <enum>QFrame::Shape::StyledPanel</enum>
+                             </property>
+                             <property name="frameShadow">
+                              <enum>QFrame::Shadow::Raised</enum>
+                             </property>
+                             <layout class="QHBoxLayout" name="horizontalLayout_12">
+                              <item>
+                               <widget class="QLabel" name="adb_mobile_label">
+                                <property name="text">
+                                 <string>mobile</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLineEdit" name="adb_mobile_lineEdit"/>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="adb_mobile_pushButton">
+                                <property name="text">
+                                 <string>浏览</string>
+                                </property>
+                               </widget>
+                              </item>
+                             </layout>
+                            </widget>
+                           </item>
+                           <item>
+                            <widget class="QPushButton" name="adb_push_pc_mobile_pushButton">
+                             <property name="text">
+                              <string>adb push &lt;pc&gt; &lt;mobile&gt;</string>
+                             </property>
+                            </widget>
+                           </item>
+                           <item>
+                            <widget class="QPushButton" name="adb_pull_mobile_pc_pushButton">
+                             <property name="text">
+                              <string>adb pull &lt;mobile&gt; &lt;pc&gt;</string>
+                             </property>
+                            </widget>
+                           </item>
+                          </layout>
                          </widget>
                         </item>
                        </layout>
