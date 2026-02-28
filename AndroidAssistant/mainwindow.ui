@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_4">
+   <layout class="QHBoxLayout" name="horizontalLayout_11">
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
@@ -42,7 +42,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>991</width>
-                <height>1053</height>
+                <height>1623</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -52,9 +52,6 @@
                   <string>ADB 设备</string>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_11">
-                  <item>
-                   <widget class="QListWidget" name="adb_devices_listWidget"/>
-                  </item>
                   <item>
                    <widget class="QFrame" name="frame_3">
                     <property name="frameShape">
@@ -72,7 +69,17 @@
                        <property name="frameShadow">
                         <enum>QFrame::Shadow::Raised</enum>
                        </property>
-                       <layout class="QHBoxLayout" name="horizontalLayout_7">
+                       <layout class="QVBoxLayout" name="verticalLayout_10">
+                        <item>
+                         <widget class="QListWidget" name="adb_devices_listWidget">
+                          <property name="minimumSize">
+                           <size>
+                            <width>0</width>
+                            <height>100</height>
+                           </size>
+                          </property>
+                         </widget>
+                        </item>
                         <item>
                          <widget class="QFrame" name="frame_2">
                           <property name="frameShape">
@@ -83,20 +90,20 @@
                           </property>
                           <layout class="QHBoxLayout" name="horizontalLayout">
                            <item>
-                            <widget class="QCheckBox" name="long_checkBox_2">
+                            <widget class="QCheckBox" name="adb_devices_l_checkBox">
                              <property name="text">
-                              <string>显示详细信息</string>
+                              <string>-l （显示详细信息）</string>
+                             </property>
+                            </widget>
+                           </item>
+                           <item>
+                            <widget class="QPushButton" name="adb_devices_pushButton">
+                             <property name="text">
+                              <string>adb devices</string>
                              </property>
                             </widget>
                            </item>
                           </layout>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="adb_devices_pushButton">
-                          <property name="text">
-                           <string>查询调试设备列表</string>
-                          </property>
                          </widget>
                         </item>
                        </layout>
@@ -141,17 +148,62 @@
                       </widget>
                      </item>
                      <item>
-                      <widget class="QPushButton" name="adb_reboot_pushButton">
-                       <property name="text">
-                        <string>adb reboot</string>
+                      <widget class="QFrame" name="frame_8">
+                       <property name="frameShape">
+                        <enum>QFrame::Shape::StyledPanel</enum>
                        </property>
+                       <property name="frameShadow">
+                        <enum>QFrame::Shadow::Raised</enum>
+                       </property>
+                       <layout class="QHBoxLayout" name="horizontalLayout_7">
+                        <item>
+                         <widget class="QPushButton" name="adb_reboot_pushButton">
+                          <property name="text">
+                           <string>adb reboot</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="adb_reboot_recovery_pushButton">
+                          <property name="text">
+                           <string>adb reboot recovery</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="adb_reboot_bootloader_pushButton">
+                          <property name="text">
+                           <string>adb reboot bootloader</string>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
                       </widget>
                      </item>
                      <item>
-                      <widget class="QPushButton" name="adb_reboot_bootloader_pushButton">
-                       <property name="text">
-                        <string>adb reboot bootloader</string>
+                      <widget class="QFrame" name="frame_12">
+                       <property name="frameShape">
+                        <enum>QFrame::Shape::StyledPanel</enum>
                        </property>
+                       <property name="frameShadow">
+                        <enum>QFrame::Shadow::Raised</enum>
+                       </property>
+                       <layout class="QHBoxLayout" name="horizontalLayout_8">
+                        <item>
+                         <widget class="QPushButton" name="adb_push_pc_mobile_pushButton">
+                          <property name="text">
+                           <string>adb push &lt;pc&gt; &lt;mobile&gt;</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="adb_pull_mobile_pc_pushButton">
+                          <property name="text">
+                           <string>adb pull &lt;mobile&gt; &lt;pc&gt;</string>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
                       </widget>
                      </item>
                     </layout>
@@ -161,36 +213,68 @@
                 </widget>
                </item>
                <item>
-                <spacer name="horizontalSpacer">
+                <widget class="Line" name="line_3">
                  <property name="orientation">
                   <enum>Qt::Orientation::Horizontal</enum>
                  </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
+                </widget>
                </item>
                <item>
-                <widget class="QGroupBox" name="groupBox_4">
+                <widget class="QGroupBox" name="fastboot_devices_groupBox">
                  <property name="title">
                   <string>Fastboot 设备</string>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_17">
                   <item>
-                   <widget class="QListWidget" name="fastboot_devices_listWidget"/>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="fastboot_devices_pushButton">
-                    <property name="text">
-                     <string>查询引导模式设备列表</string>
+                   <widget class="QFrame" name="frame_14">
+                    <property name="frameShape">
+                     <enum>QFrame::Shape::StyledPanel</enum>
                     </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Shadow::Raised</enum>
+                    </property>
+                    <layout class="QVBoxLayout" name="verticalLayout_18">
+                     <item>
+                      <widget class="QListWidget" name="fastboot_devices_listWidget">
+                       <property name="minimumSize">
+                        <size>
+                         <width>0</width>
+                         <height>100</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QFrame" name="frame_15">
+                       <property name="frameShape">
+                        <enum>QFrame::Shape::StyledPanel</enum>
+                       </property>
+                       <property name="frameShadow">
+                        <enum>QFrame::Shadow::Raised</enum>
+                       </property>
+                       <layout class="QHBoxLayout" name="horizontalLayout_10">
+                        <item>
+                         <widget class="QPushButton" name="fastboot_devices_pushButton">
+                          <property name="text">
+                           <string>fastboot devices</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="fastboot_getvar_all_pushButton">
+                          <property name="text">
+                           <string>fastboot getvar all</string>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                    </layout>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QFrame" name="frame_8">
+                   <widget class="QFrame" name="frame_13">
                     <property name="frameShape">
                      <enum>QFrame::Shape::StyledPanel</enum>
                     </property>
@@ -205,33 +289,54 @@
                        </property>
                       </widget>
                      </item>
+                     <item>
+                      <widget class="QPushButton" name="fastboot_reboot_recovery_pushButton">
+                       <property name="text">
+                        <string>fastboot reboot recovery</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="fastboot_reboot_bootloader_pushButton">
+                       <property name="text">
+                        <string>fastboot reboot bootloader</string>
+                       </property>
+                      </widget>
+                     </item>
                     </layout>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="flash_all_pushButton">
+                    <property name="text">
+                     <string>flash-all</string>
+                    </property>
                    </widget>
                   </item>
                  </layout>
                 </widget>
                </item>
                <item>
-                <spacer name="horizontalSpacer_2">
+                <widget class="Line" name="line">
                  <property name="orientation">
                   <enum>Qt::Orientation::Horizontal</enum>
                  </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
+                </widget>
                </item>
                <item>
-                <widget class="QGroupBox" name="groupBox_2">
+                <widget class="QGroupBox" name="package_groupBox">
                  <property name="title">
-                  <string>应用包名</string>
+                  <string>Package 包名</string>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_14">
                   <item>
                    <widget class="QListWidget" name="adb_shell_pm_list_packages_listWidget">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>200</height>
+                     </size>
+                    </property>
                     <property name="selectionMode">
                      <enum>QAbstractItemView::SelectionMode::MultiSelection</enum>
                     </property>
@@ -256,16 +361,16 @@
                        </property>
                        <layout class="QVBoxLayout" name="verticalLayout_5">
                         <item>
-                         <widget class="QCheckBox" name="system_packages_checkBox">
+                         <widget class="QCheckBox" name="adb_shell_pm_list_packages_s_checkBox">
                           <property name="text">
-                           <string>获取系统应用</string>
+                           <string>-s （获取系统应用）</string>
                           </property>
                          </widget>
                         </item>
                         <item>
-                         <widget class="QCheckBox" name="third_party_packages_checkBox">
+                         <widget class="QCheckBox" name="adb_shell_pm_list_packages_3_checkBox">
                           <property name="text">
-                           <string>获取第三方应用</string>
+                           <string>-3 （获取第三方应用）</string>
                           </property>
                          </widget>
                         </item>
@@ -275,7 +380,7 @@
                      <item>
                       <widget class="QPushButton" name="adb_shell_pm_list_packages_pushButton">
                        <property name="text">
-                        <string>查询包名</string>
+                        <string>adb shell pm list packages</string>
                        </property>
                       </widget>
                      </item>
@@ -292,70 +397,16 @@
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_6">
                      <item>
-                      <widget class="QPushButton" name="install_apk_pushButton">
+                      <widget class="QPushButton" name="adb_install_apk_pushButton">
                        <property name="text">
                         <string>adb install &lt;apk&gt;</string>
                        </property>
                       </widget>
                      </item>
                      <item>
-                      <widget class="QPushButton" name="uninstall_apk_pushButton">
+                      <widget class="QPushButton" name="adb_uninstall_package_pushButton">
                        <property name="text">
                         <string>adb uninstall &lt;package&gt;</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_3">
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QGroupBox" name="groupBox_5">
-                 <property name="title">
-                  <string>进程</string>
-                 </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_15">
-                  <item>
-                   <widget class="QListWidget" name="listWidget"/>
-                  </item>
-                  <item>
-                   <widget class="QFrame" name="frame">
-                    <property name="frameShape">
-                     <enum>QFrame::Shape::StyledPanel</enum>
-                    </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Shadow::Raised</enum>
-                    </property>
-                    <layout class="QHBoxLayout" name="horizontalLayout_2">
-                     <item>
-                      <widget class="QLabel" name="label">
-                       <property name="text">
-                        <string>TextLabel</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLineEdit" name="lineEdit"/>
-                     </item>
-                     <item>
-                      <widget class="QPushButton" name="pushButton">
-                       <property name="text">
-                        <string>PushButton</string>
                        </property>
                       </widget>
                      </item>
@@ -367,6 +418,61 @@
                     <property name="text">
                      <string>adb shell am force-stop &lt;package&gt;</string>
                     </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="Line" name="line_2">
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QGroupBox" name="process_groupBox">
+                 <property name="title">
+                  <string>Process 进程</string>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_15" stretch="0,0">
+                  <item>
+                   <widget class="QTableWidget" name="process_tableWidget">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>400</height>
+                     </size>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QFrame" name="frame">
+                    <property name="frameShape">
+                     <enum>QFrame::Shape::StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Shadow::Raised</enum>
+                    </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_2">
+                     <item>
+                      <widget class="QLabel" name="keyword_label">
+                       <property name="text">
+                        <string>关键词</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLineEdit" name="process_keyword_lineEdit"/>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="process_search_pushButton">
+                       <property name="text">
+                        <string>搜索</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
                    </widget>
                   </item>
                  </layout>
@@ -397,6 +503,17 @@
             </widget>
            </item>
           </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tool_page">
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QPushButton" name="rename_apk_pushButton">
+          <property name="text">
+           <string>重命名apk</string>
+          </property>
          </widget>
         </item>
        </layout>
@@ -466,6 +583,13 @@
          <widget class="QPushButton" name="frida_pushButton">
           <property name="text">
            <string>frida</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="tool_pushButton">
+          <property name="text">
+           <string>tool</string>
           </property>
          </widget>
         </item>
