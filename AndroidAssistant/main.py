@@ -6,13 +6,374 @@ import pandas as pd
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QMenu, QTableWidgetItem, \
-    QAbstractItemView
+    QAbstractItemView, QDialog, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QTextBrowser
 from androguard.core import apk as androguard_core_apk
 
 from cmd import Cmd
 from logger import Logger
 from signals import Signals
 from ui_mainwindow import Ui_MainWindow
+import sys
+import os
+import subprocess
+from PySide6.QtWidgets import (
+    QApplication, QWidget, QVBoxLayout,
+    QPushButton, QLineEdit, QDialog,
+    QTreeWidget, QTreeWidgetItem,
+    QHBoxLayout, QLabel, QFrame
+)
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QStyle
+
+
+class BaseFileDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.resize(800, 650)
+        self.setMinimumSize(700, 500)
+
+        self.current_path = self.get_root_path()
+        self.history = []
+        self.future = []
+        self.only_dir_mode = False
+
+        main_layout = QVBoxLayout(self)
+        main_layout.setSpacing(8)
+
+        self.title_label = QLabel("文件浏览器")
+        self.title_label.setStyleSheet("font-size:16px;font-weight:bold;")
+        main_layout.addWidget(self.title_label)
+
+        nav_layout = QHBoxLayout()
+        self.back_btn = QPushButton("←")
+        self.forward_btn = QPushButton("→")
+
+        self.path_edit = QLineEdit()
+        self.path_edit.returnPressed.connect(self.jump_to_path)
+
+        nav_layout.addWidget(self.back_btn)
+        nav_layout.addWidget(self.forward_btn)
+        nav_layout.addWidget(self.path_edit)
+        main_layout.addLayout(nav_layout)
+
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
+        main_layout.addWidget(line)
+
+        self.tree = QTreeWidget()
+        self.tree.setHeaderLabels(["名称"])
+        self.tree.setColumnWidth(0, 600)
+        self.tree.setSelectionMode(QTreeWidget.ExtendedSelection)
+        self.tree.setAlternatingRowColors(True)
+        main_layout.addWidget(self.tree, stretch=1)
+
+        self.selected_label = QLineEdit()
+        self.selected_label.setReadOnly(True)
+        self.selected_label.setPlaceholderText("已选择路径（支持多选）")
+        main_layout.addWidget(self.selected_label)
+
+        bottom_layout = QHBoxLayout()
+        bottom_layout.addStretch()
+        self.ok_btn = QPushButton("确定")
+        self.cancel_btn = QPushButton("取消")
+        self.ok_btn.setMinimumWidth(100)
+        self.cancel_btn.setMinimumWidth(100)
+        bottom_layout.addWidget(self.ok_btn)
+        bottom_layout.addWidget(self.cancel_btn)
+        main_layout.addLayout(bottom_layout)
+
+        self.tree.itemDoubleClicked.connect(self.enter_directory)
+        self.tree.itemSelectionChanged.connect(self.update_selected_label)
+        self.back_btn.clicked.connect(self.go_back)
+        self.forward_btn.clicked.connect(self.go_forward)
+        self.ok_btn.clicked.connect(self.accept)
+        self.cancel_btn.clicked.connect(self.reject)
+
+        self.load_files()
+
+    def add_item(self, name, is_dir):
+        icon = self.style().standardIcon(
+            QStyle.SP_DirIcon if is_dir else QStyle.SP_FileIcon
+        )
+        display_name = name + "/" if is_dir else name
+
+        item = QTreeWidgetItem([display_name])
+        item.setIcon(0, icon)
+        item.setData(0, Qt.UserRole, is_dir)
+        self.tree.addTopLevelItem(item)
+
+    def jump_to_path(self):
+        new_path = self.path_edit.text().strip()
+        if not new_path:
+            return
+        self.history.append(self.current_path)
+        self.current_path = new_path
+        self.load_files()
+
+    def load_files(self):
+        self.tree.clear()
+        self.path_edit.setText(self.current_path)
+        self.title_label.setText(f"选择的目录或文件: {self.current_path}")
+
+        parent = self.parent_path(self.current_path)
+        if parent and parent != self.current_path:
+            parent_item = QTreeWidgetItem([".."])
+            parent_item.setIcon(0, self.style().standardIcon(QStyle.SP_ArrowUp))
+            parent_item.setData(0, Qt.UserRole, "parent")
+            self.tree.addTopLevelItem(parent_item)
+
+        dirs, files = self.list_dir(self.current_path)
+        dirs.sort()
+        files.sort()
+
+        for d in dirs:
+            self.add_item(d, True)
+
+        if not self.only_dir_mode:
+            for f in files:
+                self.add_item(f, False)
+
+        self.update_selected_label()
+        self.update_nav_buttons()
+
+    def enter_directory(self, item):
+        data = item.data(0, Qt.UserRole)
+
+        if data == "parent":
+            self.future.clear()
+            self.history.append(self.current_path)
+            self.current_path = self.parent_path(self.current_path)
+
+        elif data:
+            self.history.append(self.current_path)
+            self.future.clear()
+            name = item.text(0).rstrip("/")
+            self.current_path = self.join_path(self.current_path, name)
+
+        self.load_files()
+
+    def update_selected_label(self):
+        items = self.tree.selectedItems()
+        paths = []
+
+        for item in items:
+            data = item.data(0, Qt.UserRole)
+            if data == "parent":
+                continue
+
+            name = item.text(0).rstrip("/")
+            full = self.join_path(self.current_path, name)
+
+            if self.only_dir_mode and not data:
+                continue
+
+            paths.append(full)
+
+        self.selected_label.setText(";".join(paths))
+
+    def selected_files(self):
+        return self.selected_label.text().split(";") if self.selected_label.text() else []
+
+    def go_back(self):
+        if not self.history:
+            return
+        self.future.append(self.current_path)
+        self.current_path = self.history.pop()
+        self.load_files()
+
+    def go_forward(self):
+        if not self.future:
+            return
+        self.history.append(self.current_path)
+        self.current_path = self.future.pop()
+        self.load_files()
+
+    def update_nav_buttons(self):
+        self.back_btn.setEnabled(bool(self.history))
+        self.forward_btn.setEnabled(bool(self.future))
+
+    def get_root_path(self):
+        raise NotImplementedError
+
+    def list_dir(self, path):
+        raise NotImplementedError
+
+    def join_path(self, base, name):
+        raise NotImplementedError
+
+    def parent_path(self, path):
+        raise NotImplementedError
+
+    @classmethod
+    def getOpenFileNames(cls, parent=None):
+        dialog = cls(parent)
+        dialog.only_dir_mode = False
+        dialog.tree.setSelectionMode(QTreeWidget.ExtendedSelection)
+        dialog.setWindowTitle("选择文件或目录")
+
+        if dialog.exec():
+            return dialog.selected_files()
+        return []
+
+    @classmethod
+    def getExistingDirectory(cls, parent=None):
+        dialog = cls(parent)
+        dialog.only_dir_mode = True
+        dialog.tree.setSelectionMode(QTreeWidget.SingleSelection)
+        dialog.setWindowTitle("选择目录")
+
+        if dialog.exec():
+            return dialog.selected_files()[0]
+        return []
+
+
+class PcFileDialog(BaseFileDialog):
+
+    def get_root_path(self):
+        return os.path.abspath(os.sep)
+
+    def list_dir(self, path):
+        try:
+            entries = os.listdir(path)
+        except:  # noqa
+            return [], []
+
+        dirs, files = [], []
+        for name in entries:
+            full = os.path.join(path, name)
+            if os.path.isdir(full):
+                dirs.append(name)
+            else:
+                files.append(name)
+        return dirs, files
+
+    def join_path(self, base, name):
+        return os.path.join(base, name)
+
+    def parent_path(self, path):
+        return os.path.dirname(path.rstrip(os.sep))
+
+
+class MobileFileDialog(BaseFileDialog):
+
+    def get_root_path(self):
+        return "/"
+
+    def list_dir(self, path):
+        cmd = ["adb", "shell", "su", "-c", "ls", "-l", path]
+        result = subprocess.run(cmd, capture_output=True, text=True)
+
+        dirs, files = [], []
+        for line in result.stdout.splitlines():
+            parts = line.split()
+            if len(parts) < 6:
+                continue
+            name = parts[-1]
+            if line.startswith("d"):
+                dirs.append(name)
+            else:
+                files.append(name)
+        return dirs, files
+
+    def join_path(self, base, name):
+        return base.rstrip("/") + "/" + name
+
+    def parent_path(self, path):
+        return "/".join(path.rstrip("/").split("/")[:-1])
+
+
+class ADBPushPullDialog(QDialog):
+    def __init__(self, title, parent=None):
+        super().__init__(parent)
+        self.title = title
+        self.setWindowTitle(self.title)
+        self.resize(450, 200)
+
+        main_layout = QVBoxLayout(self)
+
+        row1 = QHBoxLayout()
+        if self.title == "adb push":
+            self.label1 = QLabel("pc       ：")
+        else:
+            assert self.title == "adb pull"
+            self.label1 = QLabel("mobile：")
+        self.line_edit1 = QLineEdit()
+        self.line_edit1.setReadOnly(True)
+        self.btn1 = QPushButton("浏览")
+        row1.addWidget(self.label1)
+        row1.addWidget(self.line_edit1)
+        row1.addWidget(self.btn1)
+        main_layout.addLayout(row1)
+
+        row2 = QHBoxLayout()
+        if self.title == "adb push":
+            self.label2 = QLabel("mobile：")
+        else:
+            assert self.title == "adb pull"
+            self.label2 = QLabel("pc       ：")
+        self.line_edit2 = QLineEdit()
+        self.line_edit2.setReadOnly(True)
+        self.btn2 = QPushButton("浏览")
+        row2.addWidget(self.label2)
+        row2.addWidget(self.line_edit2)
+        row2.addWidget(self.btn2)
+        main_layout.addLayout(row2)
+
+        self.text_browser = QTextBrowser()
+        main_layout.addWidget(self.text_browser)
+
+        bottom_layout = QHBoxLayout()
+        bottom_layout.addStretch()
+        self.ok_btn = QPushButton("确定")
+        self.cancel_btn = QPushButton("取消")
+        bottom_layout.addWidget(self.ok_btn)
+        bottom_layout.addWidget(self.cancel_btn)
+        main_layout.addLayout(bottom_layout)
+
+        self.ok_btn.clicked.connect(self.on_ok)
+        self.cancel_btn.clicked.connect(self.close)
+
+        def on_btn1_clicked():
+            if title == "adb push":
+                value = ";".join(PcFileDialog.getOpenFileNames(self))
+
+            else:
+                assert title == "adb pull"
+                value = ";".join(MobileFileDialog.getOpenFileNames(self))
+            self.update_line(self.line_edit1, value)
+
+        def on_btn2_clicked():
+            if title == "adb push":
+                value = MobileFileDialog.getExistingDirectory(self)
+            else:
+                assert title == "adb pull"
+                value = PcFileDialog.getExistingDirectory(self)
+            self.update_line(self.line_edit2, value)
+
+        self.btn1.clicked.connect(on_btn1_clicked)
+        self.btn2.clicked.connect(on_btn2_clicked)
+
+        self.line_edit1.textChanged.connect(self.update_display)
+        self.line_edit2.textChanged.connect(self.update_display)
+
+    def update_line(self, line_edit, value):
+        line_edit.setText(value)
+
+    def update_display(self):
+        text1 = self.line_edit1.text()
+        text2 = self.line_edit2.text()
+
+        self.text_browser.clear()
+
+        for i in text1.split(";"):
+            self.text_browser.append(f"{self.title} {i} {text2}")
+
+    def on_ok(self):
+        print(self.line_edit.text())
+        self.close()
 
 
 class AndroidAssistant(QMainWindow):
@@ -31,8 +392,6 @@ class AndroidAssistant(QMainWindow):
         self._init_signal()
 
     def _init(self):
-        self._ui.adb_pc_pushButton.clicked.connect(self.on_adb_pc_pushButton_clicked)
-
         self._ui.adb_pushButton.clicked.connect(
             lambda: self._ui.stackedWidget.setCurrentWidget(self._ui.adb_page)
         )
@@ -77,6 +436,59 @@ class AndroidAssistant(QMainWindow):
         )
         self._ui.fastboot_devices_pushButton.clicked.connect(self.on_fastboot_devices_pushButton_clicked)
 
+        # def on_adb_push_pc_mobile_pushButton_clicked():
+        #     pc_file_path = self._ui.pc_lineEdit.text()
+        #     mobile_file_path = self._ui.mobile_lineEdit.text()
+        #     if not pc_file_path or not mobile_file_path:
+        #         return
+        #     program_args = ["push", pc_file_path, mobile_file_path]
+        #     self._cmd.run("adb", program_args)
+
+        def on_adb_push_pc_mobile_pushButton_clicked():
+            dialog = ADBPushPullDialog("adb push", self)
+            dialog.show()
+
+        self._ui.adb_push_pc_mobile_pushButton.clicked.connect(on_adb_push_pc_mobile_pushButton_clicked)
+
+        # def on_adb_pull_mobile_pc_pushButton_clicked():
+        #     mobile_file_path = self._ui.mobile_lineEdit.text()
+        #     pc_file_path = self._ui.pc_lineEdit.text()
+        #     if not mobile_file_path or not pc_file_path:
+        #         return
+        #     program_args = ["pull", mobile_file_path, pc_file_path]
+        #     self._cmd.run("adb", program_args)
+
+        def on_adb_pull_mobile_pc_pushButton_clicked():
+            dialog = ADBPushPullDialog("adb pull", self)
+            dialog.show()
+
+        self._ui.adb_pull_mobile_pc_pushButton.clicked.connect(on_adb_pull_mobile_pc_pushButton_clicked)
+
+        def on_fastboot_flash_boot_img_pushButton_clicked():
+            img_file_path, _ = QFileDialog.getOpenFileName(
+                self,
+                "单选要刷入的 img 文件路径",
+                self.APKS_DIR,
+                "img 文件路径 (*.img)"
+            )
+
+            if img_file_path:
+                self._cmd.run("fastboot", ["flash", "boot", img_file_path])
+
+        self._ui.fastboot_flash_boot_img_pushButton.clicked.connect(on_fastboot_flash_boot_img_pushButton_clicked)
+
+        def on_fastboot_getvar_all_pushButton_clicked():
+            def callback(code, output):
+                self._ui.fastboot_devices_listWidget.clear()
+                if code == 0:
+                    data = output.replace("\r\n", "\n")
+                    items = re.findall(r"\(bootloader\) (.*?)\n", data, re.DOTALL)
+                    self._ui.fastboot_devices_listWidget.addItems(items)
+
+            self._cmd.run("fastboot", ["getvar", "all"], callback)
+
+        self._ui.fastboot_getvar_all_pushButton.clicked.connect(on_fastboot_getvar_all_pushButton_clicked)
+
         self._ui.adb_install_apk_pushButton.clicked.connect(self.on_adb_install_apk_pushButton_clicked)
         self._ui.adb_uninstall_package_pushButton.clicked.connect(self.on_adb_uninstall_package_pushButton_clicked)
         self._ui.adb_shell_am_force__stop_package_pushButton.clicked.connect(
@@ -112,17 +524,6 @@ class AndroidAssistant(QMainWindow):
     @property
     def logger(self):
         return self._logger
-
-    def on_adb_pc_pushButton_clicked(self):
-        dialog = QFileDialog(self)
-        dialog.setWindowTitle("选择文件或目录")
-        dialog.setNameFilter("文件或目录 (*.*)")
-        dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
-        dialog.setViewMode(QFileDialog.ViewMode.Detail)
-        if dialog.exec():
-            selected_files = dialog.selectedFiles()
-            text = ";".join([file_path for file_path in selected_files])
-            self._ui.adb_pc_lineEdit.setText(text)
 
     def on_adb_shell_pm_list_packages_pushButton_clicked(self):
         def callback(code, output):
@@ -210,9 +611,8 @@ class AndroidAssistant(QMainWindow):
             self._ui.adb_devices_listWidget.clear()
             if code == 0:
                 data = re.findall(r"List of devices attached(.*)", output, re.DOTALL)[0].strip()
-                items = data.split("\r\n")
-                if len(items) == 1:
-                    items = items[0].split("\n")
+                data = data.replace("\r\n", "").split("\n")
+                items = ["\t".join(i.split()) for i in data]
 
                 self._ui.adb_devices_listWidget.addItems(items)
 
